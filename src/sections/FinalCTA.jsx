@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function FinalCTA() {
+export default function FinalCTA({ onSignUpClick }) {
   return (
     <section className="py-20 md:py-28 bg-white dark:bg-[#070a13] relative overflow-hidden">
       {/* Background glowing gradients */}
@@ -28,12 +28,12 @@ export default function FinalCTA() {
               Bring your farm's costs and returns into one clear view. Start optimizing your margins today.
             </p>
             <div className="pt-4">
-              <a
-                href="#getstarted"
-                className="inline-block px-8 py-4 text-center font-bold bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/10 transition-all transform hover:-translate-y-0.5 cursor-pointer w-full sm:w-auto"
+              <button
+                onClick={onSignUpClick}
+                className="inline-block px-8 py-4 text-center font-bold bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/10 transition-all transform hover:-translate-y-0.5 cursor-pointer w-full sm:w-auto border-none"
               >
                 Get started
-              </a>
+              </button>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
               Free 14-day sample workspace. No credit card required.

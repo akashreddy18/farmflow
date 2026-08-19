@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import DashboardMockup from '../components/DashboardMockup';
 import { Play } from 'lucide-react';
 
-export default function Hero() {
+export default function Hero({ onSignUpClick }) {
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-gray-50/30 dark:bg-[#070a13]/30">
       {/* Visual background grids */}
@@ -50,12 +50,12 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
             >
-              <a
-                href="#getstarted"
-                className="w-full sm:w-auto px-7 py-3.5 text-center font-semibold bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all cursor-pointer"
+              <button
+                onClick={onSignUpClick}
+                className="w-full sm:w-auto px-7 py-3.5 text-center font-semibold bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all cursor-pointer border-none"
               >
                 Start planning
-              </a>
+              </button>
               <a
                 href="#product"
                 className="w-full sm:w-auto px-7 py-3.5 text-center font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all flex items-center justify-center gap-2 group cursor-pointer"

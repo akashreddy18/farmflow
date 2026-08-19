@@ -4,7 +4,7 @@ import { Menu, X, Sprout } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 
-export default function Navbar() {
+export default function Navbar({ onSignInClick, onSignUpClick }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -63,18 +63,18 @@ export default function Navbar() {
             {/* Desktop CTAs */}
             <div className="hidden md:flex items-center gap-4">
               <ThemeToggle />
-              <a
-                href="#signin"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors px-3 py-1.5"
+              <button
+                onClick={onSignInClick}
+                className="text-sm font-medium text-gray-650 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors px-3 py-1.5 cursor-pointer bg-transparent border-none"
               >
                 Sign in
-              </a>
-              <a
-                href="#getstarted"
+              </button>
+              <button
+                onClick={onSignUpClick}
                 className="text-sm font-medium bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-sm shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all cursor-pointer"
               >
                 Get started
-              </a>
+              </button>
             </div>
 
             {/* Mobile Actions and Hamburger */}
@@ -115,20 +115,18 @@ export default function Navbar() {
               ))}
             </nav>
             <div className="flex flex-col gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
-              <a
-                href="#signin"
-                onClick={() => setIsOpen(false)}
-                className="text-center font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2.5 hover:bg-gray-100/50 dark:hover:bg-slate-850 rounded-lg transition-all"
+              <button
+                onClick={() => { setIsOpen(false); onSignInClick(); }}
+                className="text-center font-medium text-gray-750 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2.5 hover:bg-gray-100/50 dark:hover:bg-slate-850 rounded-lg transition-all cursor-pointer bg-transparent border-none"
               >
                 Sign in
-              </a>
-              <a
-                href="#getstarted"
-                onClick={() => setIsOpen(false)}
-                className="text-center font-medium bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white py-2.5 rounded-lg shadow-sm shadow-emerald-500/10 transition-all"
+              </button>
+              <button
+                onClick={() => { setIsOpen(false); onSignUpClick(); }}
+                className="text-center font-medium bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white py-2.5 rounded-lg shadow-sm shadow-emerald-500/10 transition-all cursor-pointer"
               >
                 Get started
-              </a>
+              </button>
             </div>
           </motion.div>
         )}
