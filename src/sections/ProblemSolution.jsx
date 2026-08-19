@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Compass, CheckCircle, Smartphone, BarChart3, CalendarRange } from 'lucide-react';
+import { Smartphone, BarChart3, CalendarRange } from 'lucide-react';
+
 
 export default function ProblemSolution() {
   const steps = [

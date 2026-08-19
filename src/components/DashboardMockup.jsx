@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
 import { 
   TrendingUp, 
-  DollarSign, 
   Layers, 
   Wrench, 
   User, 
   Droplet, 
   Sprout, 
-  ChevronRight,
-  ArrowDownRight,
-  ArrowUpRight,
   Sliders,
   Info
 } from 'lucide-react';
@@ -26,6 +21,10 @@ const CROP_DATA = {
     minPrice: 4.50,
     maxPrice: 9.50,
     unit: 'Bu/Acre',
+    history: [
+      { year: '2024', yield: 61 },
+      { year: '2025', yield: 66 },
+    ],
     investment: {
       seed: 4200,
       fertilizer: 11500,
@@ -50,6 +49,10 @@ const CROP_DATA = {
     minPrice: 9.00,
     maxPrice: 18.00,
     unit: 'Bu/Acre',
+    history: [
+      { year: '2024', yield: 38 },
+      { year: '2025', yield: 43 },
+    ],
     investment: {
       seed: 5100,
       fertilizer: 6400,
@@ -74,6 +77,10 @@ const CROP_DATA = {
     minPrice: 3.00,
     maxPrice: 7.00,
     unit: 'Bu/Acre',
+    history: [
+      { year: '2024', yield: 155 },
+      { year: '2025', yield: 168 },
+    ],
     investment: {
       seed: 12000,
       fertilizer: 22500,
@@ -106,11 +113,9 @@ export default function DashboardMockup({ variant = 'compact' }) {
   const [yieldVal, setYieldVal] = useState(activeCrop.defaultYield);
   const [priceVal, setPriceVal] = useState(activeCrop.defaultPrice);
 
-  // Sync state when crop changes
-  useEffect(() => {
-    setYieldVal(activeCrop.defaultYield);
-    setPriceVal(activeCrop.defaultPrice);
-  }, [activeCropKey, activeCrop]);
+  // Sub-tab selection for Expense Breakdown Card
+  const [subTab, setSubTab] = useState('expenses'); // 'expenses' | 'yield'
+
 
   // Calculations
   const totalInvestment = Object.values(activeCrop.investment).reduce((a, b) => a + b, 0);
@@ -151,7 +156,11 @@ export default function DashboardMockup({ variant = 'compact' }) {
           {Object.entries(CROP_DATA).map(([key, data]) => (
             <button
               key={key}
-              onClick={() => setActiveCropKey(key)}
+              onClick={() => {
+                setActiveCropKey(key);
+                setYieldVal(data.defaultYield);
+                setPriceVal(data.defaultPrice);
+              }}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
                 activeCropKey === key 
                   ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm' 
@@ -241,49 +250,183 @@ export default function DashboardMockup({ variant = 'compact' }) {
         {/* Row 2: Charts & Data breakdown */}
         <div className={`grid grid-cols-1 gap-6 ${variant === 'full' ? 'lg:grid-cols-12' : 'lg:grid-cols-2'}`}>
           
-          {/* Expense Breakdown Card */}
+          {/* Expense Breakdown / Yield Trends Card */}
           <div className={`p-5 rounded-xl border border-gray-100 dark:border-slate-800/80 bg-gray-50/10 dark:bg-slate-900/10 ${variant === 'full' ? 'lg:col-span-6' : ''}`}>
-            <h5 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4">
-              Expense Allocation
-            </h5>
+            {/* Header Tabs */}
+            <div className="flex justify-between items-center mb-5 pb-2 border-b border-gray-100/50 dark:border-slate-800/50">
+              <div className="flex bg-gray-100 dark:bg-slate-800/60 p-0.5 rounded-lg text-[10px]">
+                <button
+                  onClick={() => setSubTab('expenses')}
+                  className={`px-3 py-1 rounded-md font-semibold transition-all duration-150 ${
+                    subTab === 'expenses'
+                      ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  Expenses
+                </button>
+                <button
+                  onClick={() => setSubTab('yield')}
+                  className={`px-3 py-1 rounded-md font-semibold transition-all duration-150 ${
+                    subTab === 'yield'
+                      ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  Yield History
+                </button>
+              </div>
+              <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                {subTab === 'expenses' ? 'Expense Allocation' : 'Yield Trends'}
+              </span>
+            </div>
             
-            {/* Visual Breakdown Bar Chart */}
-            <div className="w-full h-4 rounded-full overflow-hidden flex mb-6">
-              {expenseCategories.map((cat) => {
-                const percentage = (cat.value / totalInvestment) * 100;
-                return (
-                  <div 
-                    key={cat.name} 
-                    className={`${cat.color} h-full`} 
-                    style={{ width: `${percentage}%` }}
-                    title={`${cat.name}: ${formatCurrency(cat.value)} (${percentage.toFixed(0)}%)`}
-                  />
-                );
-              })}
-            </div>
+            {subTab === 'expenses' ? (
+              <>
+                {/* Visual Breakdown Bar Chart */}
+                <div className="w-full h-4 rounded-full overflow-hidden flex mb-6">
+                  {expenseCategories.map((cat) => {
+                    const percentage = (cat.value / totalInvestment) * 100;
+                    return (
+                      <div 
+                        key={cat.name} 
+                        className={`${cat.color} h-full`} 
+                        style={{ width: `${percentage}%` }}
+                        title={`${cat.name}: ${formatCurrency(cat.value)} (${percentage.toFixed(0)}%)`}
+                      />
+                    );
+                  })}
+                </div>
 
-            {/* List with Icons and Percentages */}
-            <div className="space-y-3">
-              {expenseCategories.map((cat) => {
-                const percentage = (cat.value / totalInvestment) * 100;
-                const IconComponent = cat.icon;
-                return (
-                  <div key={cat.name} className="flex justify-between items-center text-xs">
-                    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                      <div className={`w-6 h-6 rounded flex items-center justify-center ${cat.color} bg-opacity-10 dark:bg-opacity-10`}>
-                        <IconComponent className={`w-3.5 h-3.5`} style={{ color: `var(--color-brand-500)` }} />
+                {/* List with Icons and Percentages */}
+                <div className="space-y-3">
+                  {expenseCategories.map((cat) => {
+                    const percentage = (cat.value / totalInvestment) * 100;
+                    const IconComponent = cat.icon;
+                    return (
+                      <div key={cat.name} className="flex justify-between items-center text-xs">
+                        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                          <div className={`w-6 h-6 rounded flex items-center justify-center ${cat.color} bg-opacity-10 dark:bg-opacity-10`}>
+                            <IconComponent className={`w-3.5 h-3.5`} style={{ color: `var(--color-brand-500)` }} />
+                          </div>
+                          <span className="font-medium">{cat.name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-gray-900 dark:text-gray-100 font-semibold">{formatCurrency(cat.value)}</span>
+                          <span className="text-[10px] text-gray-400 font-medium w-8 text-right">{percentage.toFixed(0)}%</span>
+                        </div>
                       </div>
-                      <span className="font-medium">{cat.name}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-gray-900 dark:text-gray-100 font-semibold">{formatCurrency(cat.value)}</span>
-                      <span className="text-[10px] text-gray-400 font-medium w-8 text-right">{percentage.toFixed(0)}%</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              /* Yield History SVG Bar Chart */
+              <div className="flex flex-col items-center justify-between h-[216px]">
+                <svg viewBox="0 0 400 170" className="w-full h-full text-gray-400">
+                  {/* Grid Lines */}
+                  <line x1="45" y1="20" x2="370" y2="20" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3,3" />
+                  <line x1="45" y1="70" x2="370" y2="70" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3,3" />
+                  <line x1="45" y1="120" x2="370" y2="120" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="3,3" />
+                  <line x1="45" y1="140" x2="370" y2="140" stroke="currentColor" strokeOpacity="0.15" />
+
+                  {/* Grid Labels */}
+                  <text x="35" y="24" className="text-[9px] fill-gray-400 font-medium text-right" textAnchor="end">{activeCrop.maxYield}</text>
+                  <text x="35" y="74" className="text-[9px] fill-gray-400 font-medium text-right" textAnchor="end">{Math.round(activeCrop.maxYield / 2)}</text>
+                  <text x="35" y="144" className="text-[9px] fill-gray-400 font-medium text-right" textAnchor="end">0</text>
+
+                  {/* Bar 1: 2024 */}
+                  {(() => {
+                    const yMax = activeCrop.maxYield;
+                    const yVal2024 = activeCrop.history[0].yield;
+                    const hBar2024 = (yVal2024 / yMax) * 120;
+                    return (
+                      <g className="group">
+                        <rect
+                          x="75"
+                          y={140 - hBar2024}
+                          width="35"
+                          height={hBar2024}
+                          rx="4"
+                          className="fill-gray-300 dark:fill-slate-700 transition-all duration-300"
+                        />
+                        <text
+                          x="92.5"
+                          y={132 - hBar2024}
+                          className="text-[10px] fill-gray-500 dark:fill-gray-400 font-semibold"
+                          textAnchor="middle"
+                        >
+                          {yVal2024}
+                        </text>
+                      </g>
+                    );
+                  })()}
+
+                  {/* Bar 2: 2025 */}
+                  {(() => {
+                    const yMax = activeCrop.maxYield;
+                    const yVal2025 = activeCrop.history[1].yield;
+                    const hBar2025 = (yVal2025 / yMax) * 120;
+                    return (
+                      <g className="group">
+                        <rect
+                          x="180"
+                          y={140 - hBar2025}
+                          width="35"
+                          height={hBar2025}
+                          rx="4"
+                          className="fill-gray-400 dark:fill-slate-600 transition-all duration-300"
+                        />
+                        <text
+                          x="197.5"
+                          y={132 - hBar2025}
+                          className="text-[10px] fill-gray-600 dark:fill-gray-300 font-semibold"
+                          textAnchor="middle"
+                        >
+                          {yVal2025}
+                        </text>
+                      </g>
+                    );
+                  })()}
+
+                  {/* Bar 3: 2026 (Dynamic projected based on yieldVal state) */}
+                  {(() => {
+                    const yMax = activeCrop.maxYield;
+                    const hBar2026 = (yieldVal / yMax) * 120;
+                    return (
+                      <g>
+                        <rect
+                          x="285"
+                          y={140 - hBar2026}
+                          width="35"
+                          height={hBar2026}
+                          rx="4"
+                          className="fill-emerald-500 dark:fill-emerald-400 transition-all duration-150"
+                        />
+                        <text
+                          x="302.5"
+                          y={132 - hBar2026}
+                          className="text-[10px] fill-emerald-600 dark:fill-emerald-400 font-bold"
+                          textAnchor="middle"
+                        >
+                          {yieldVal}
+                        </text>
+                      </g>
+                    );
+                  })()}
+
+                  {/* X Axis Labels */}
+                  <text x="92.5" y="156" className="text-[9px] fill-gray-400 font-medium" textAnchor="middle">2024</text>
+                  <text x="197.5" y="156" className="text-[9px] fill-gray-400 font-medium" textAnchor="middle">2025</text>
+                  <text x="302.5" y="156" className="text-[9px] fill-emerald-600 dark:fill-emerald-400 font-bold" textAnchor="middle">2026 (Proj.)</text>
+                </svg>
+                <span className="text-[10px] text-gray-400 dark:text-gray-500 italic mt-1 self-start">
+                  *2026 is linked to the profitability calculator. Drag the yield slider to update the projections.
+                </span>
+              </div>
+            )}
           </div>
+
 
           {/* Interactive Calculator Sliders (Only in variant="full") */}
           {variant === 'full' && (

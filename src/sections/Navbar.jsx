@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import { Menu, X, Sprout } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
